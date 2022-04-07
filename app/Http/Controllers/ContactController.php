@@ -5,17 +5,22 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
 use App\Models\Contact;
+use Illuminate\Support\Facades\Gate;
 
 class ContactController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    }
     /**
-     * Display a listing of the resource.
-     *
+     * Display a listing of the resource*
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $contacts = Contact::latest('id')->get();
+        $contacts = Contact::latest('id')->where('user_id', auth()->user()->id)->get();
         return response()->json($contacts, 200);
     }
 
@@ -30,6 +35,7 @@ class ContactController extends Controller
         $contact = new Contact();
         $contact->name = $request->name ? $request->name : 'Unknown';
         $contact->phone = $request->phone;
+        $contact->user_id = auth()->user()->id;
         $contact->save();
 
         return response()->json($contact, 200);
@@ -46,6 +52,12 @@ class ContactController extends Controller
         $contact = Contact::find($id);
         if (is_null($contact)) {
             return response()->json(["message" => "No contact with this data"], 404);
+        }
+
+        if (Gate::denies('view', $contact)) {
+            return response()->json([
+                "message" => "forbidden"
+            ], 403);
         }
         return response()->json($contact, 200);
     }

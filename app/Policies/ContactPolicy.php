@@ -30,7 +30,7 @@ class ContactPolicy
      */
     public function view(User $user, Contact $contact)
     {
-        //
+        return $contact->user_id == $user->id;
     }
 
     /**
