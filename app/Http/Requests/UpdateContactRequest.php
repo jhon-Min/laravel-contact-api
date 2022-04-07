@@ -24,7 +24,8 @@ class UpdateContactRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'nullable|min:3|max:50',
+            'phone' => 'required|numeric'
         ];
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\ContactController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,3 +18,6 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::resource('contact', ContactController::class);
+Route::post('/register', [ApiAuthController::class, 'register'])->name('register');
+Route::post('/login', [ApiAuthController::class, 'login'])->name('login');
+Route::post('/logout', [ApiAuthController::class, 'logout'])->middleware('auth:sanctum');
